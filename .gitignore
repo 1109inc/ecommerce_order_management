@@ -1,0 +1,5 @@
+# Ignore MySQL connection files, OS files
+*.log
+*.DS_Store
+node_modules/
+.env
