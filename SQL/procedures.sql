@@ -21,6 +21,30 @@ BEGIN
     VALUES (p_name, p_email, p_password);
 END;
 //
+-- Procedure: Delete a user data from tables
+CREATE PROCEDURE DeleteUser(IN p_user_id INT)
+BEGIN
+    -- Check if user exists
+    IF EXISTS (SELECT 1 FROM users WHERE user_id = p_user_id) THEN
+        
+        -- First delete user-related data (if needed)
+        DELETE FROM payments WHERE order_id IN (
+            SELECT order_id FROM orders WHERE user_id = p_user_id
+        );
+        DELETE FROM order_items WHERE order_id IN (
+            SELECT order_id FROM orders WHERE user_id = p_user_id
+        );
+        DELETE FROM orders WHERE user_id = p_user_id;
+        
+        -- Now delete the user
+        DELETE FROM users WHERE user_id = p_user_id;
+        
+    ELSE
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'User does not exist.';
+    END IF;
+END;
+//
 -- Procedure: Calculate total amount spent by a specific user
 CREATE PROCEDURE GetUserTotalSpending(IN p_user_id INT)
 BEGIN
