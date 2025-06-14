@@ -1,5 +1,5 @@
 USE ecommerce_db;
-DELIMITER //
+
 -- Procedure: Get orders placed by a specific user
 CREATE PROCEDURE GetUserOrders(IN p_user_id INT)
 BEGIN
@@ -9,7 +9,7 @@ BEGIN
     JOIN products p ON oi.product_id = p.product_id
     WHERE o.user_id = p_user_id;
 END;
-//
+
 -- Procedure: Insert a new user into users table
 CREATE PROCEDURE InsertUser(
     IN p_name VARCHAR(100),
@@ -20,7 +20,7 @@ BEGIN
     INSERT INTO users (name, email, password)
     VALUES (p_name, p_email, p_password);
 END;
-//
+
 -- Procedure: Delete a user data from tables
 CREATE PROCEDURE DeleteUser(IN p_user_id INT)
 BEGIN
@@ -44,7 +44,7 @@ BEGIN
         SET MESSAGE_TEXT = 'User does not exist.';
     END IF;
 END;
-//
+
 -- Procedure: Calculate total amount spent by a specific user
 CREATE PROCEDURE GetUserTotalSpending(IN p_user_id INT)
 BEGIN
@@ -55,7 +55,7 @@ BEGIN
     WHERE u.user_id = p_user_id AND pay.status = 'Completed'
     GROUP BY u.name;
 END;
-//
+
 -- Procedure: Check payment status of a specific order
 CREATE PROCEDURE GetPaymentStatus(IN p_order_id INT)
 BEGIN
@@ -63,7 +63,7 @@ BEGIN
     FROM payments p
     WHERE p.order_id = p_order_id;
 END;
-//
+
 -- Procedure: List all products with stock below a given threshold
 CREATE PROCEDURE GetLowStockProducts(IN p_threshold INT)
 BEGIN
@@ -71,7 +71,7 @@ BEGIN
     FROM products
     WHERE stock < p_threshold;
 END;
-//
+
 -- Procedure: Update stock quantity of a product
 CREATE PROCEDURE UpdateProductStock(
     IN p_product_id INT,
@@ -82,7 +82,7 @@ BEGIN
     SET stock = p_new_stock
     WHERE product_id = p_product_id;
 END;
-//
+
 -- Procedure: Cancel an order and update payment status
 CREATE PROCEDURE CancelOrder(IN p_order_id INT)
 BEGIN
@@ -90,7 +90,8 @@ BEGIN
     DELETE FROM orders WHERE order_id = p_order_id;
     UPDATE payments SET status = 'Failed' WHERE order_id = p_order_id;
 END;
-//
+
+
 -- Procedure: Return total quantity sold for each product
 CREATE PROCEDURE GetProductSales()
 BEGIN
@@ -100,7 +101,7 @@ BEGIN
     GROUP BY p.name
     ORDER BY total_sold DESC;
 END;
-//
+
 -- Resetting delimiter back to semicolon for normal queries
-DELIMITER ;
+
 

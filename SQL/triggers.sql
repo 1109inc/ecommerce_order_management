@@ -1,5 +1,5 @@
 USE ecommerce_db;
-DELIMITER //
+
 -- Trigger: Decrease product stock after inserting into order_items
 CREATE TRIGGER trg_decrease_stock_after_order
 AFTER INSERT ON order_items
@@ -9,7 +9,7 @@ BEGIN
     SET stock = stock - NEW.quantity
     WHERE product_id = NEW.product_id;
 END;
-//
+
 -- Trigger: Prevent order if requested quantity exceeds stock
 CREATE TRIGGER trg_prevent_over_order
 BEFORE INSERT ON order_items
@@ -26,7 +26,7 @@ BEGIN
         SET MESSAGE_TEXT = 'Ordered quantity exceeds available stock.';
     END IF;
 END;
-//
+
 -- Table for logging order insertions
 CREATE TABLE order_log (
     log_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -43,7 +43,7 @@ BEGIN
     INSERT INTO order_log (order_id, user_id)
     VALUES (NEW.order_id, NEW.user_id);
 END;
-//
+
 -- Trigger: Set payment status to 'Completed' if amount equals sum of order items * price
 CREATE TRIGGER trg_auto_complete_payment
 BEFORE INSERT ON payments
@@ -61,7 +61,8 @@ BEGIN
         SET NEW.status = 'Completed';
     END IF;
 END;
-//
+
+
 -- Table for user deletions log
 CREATE TABLE deleted_users_log (
     log_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -78,5 +79,5 @@ BEGIN
     INSERT INTO deleted_users_log (user_id, name, email)
     VALUES (OLD.user_id, OLD.name, OLD.email);
 END;
-//
-DELIMITER ;
+
+
